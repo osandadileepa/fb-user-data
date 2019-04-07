@@ -1,0 +1,27 @@
+server:
+  port: 8080
+  
+spring:
+  data:
+    rest:
+      base-path: /api
+    jpa:
+      repositories:
+        bootstrap-mode: deferred
+
+  datasource:
+    url: jdbc:mysql://localhost/fb_user?createDatabaseIfNotExist=true&useSSL=false
+    username: root
+    password: root
+    dbcp2:
+      validation-query: SELECT 1
+      test-on-borrow: true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  jooq:
+    sql-dialect: org.hibernate.dialect.MySQL5Dialect
+    
+      
+      
