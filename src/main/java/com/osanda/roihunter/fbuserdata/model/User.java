@@ -1,14 +1,19 @@
 package com.osanda.roihunter.fbuserdata.model;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+
+import com.osanda.roihunter.fbuserdata.model.enums.Gender;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,29 +30,34 @@ import lombok.Setter;
 @Entity
 @Table(name = "USER", catalog = "fb_user")
 public class User extends BaseModel {
-	
+
 	private static final long serialVersionUID = -2650748825652470008L;
-	
+
 	@Id
-	@Column(name = "ID", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Column(name = "FB_ID", nullable = false)
+	private Long fbid;
 
-    @Pattern(regexp = "^[a-z0-9]*$")
-    @Size(min = 1, max = 50)
-    @Column(name = "USER_NAME", length = 50, unique = true, nullable = false)
-    private String userName;
+	@Column(name = "NAME")
+	private String name;
 
-    @Email
-    @Column(name = "EMAIL")
-    private String email;
-    
-    @Column(name = "GENDER", nullable = false)
-    private String gender;
-    
-    @Column(name = "FB_ID")
-    private String fbid;
-    
-    
+	@Column(name = "FIRST_NAME")
+	private String firstName;
+
+	@Column(name = "LAST_NAME")
+	private String lastName;
+
+	@Email
+	@Column(name = "EMAIL")
+	private String email;
+
+	@Column(name = "GENDER", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
+
+	@Column(name = "PROFILE_PIC_URL")
+	private String profilePicUrl = "https://graph.facebook.com/v3.2/" + this.fbid + "/picture";
+
+	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+	private List<Photo> photos;
 
 }

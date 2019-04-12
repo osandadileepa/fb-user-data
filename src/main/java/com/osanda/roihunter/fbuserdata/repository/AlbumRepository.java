@@ -3,11 +3,9 @@ package com.osanda.roihunter.fbuserdata.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-import com.osanda.roihunter.fbuserdata.model.User;
+import com.osanda.roihunter.fbuserdata.model.Album;
 
 @RepositoryRestResource(exported = false)
-public interface UserRepository extends JpaRepository<User, Long> {
-	
-	User findFirstByFbid(String id);
+public interface AlbumRepository extends JpaRepository<Album, Long> {
 
 }

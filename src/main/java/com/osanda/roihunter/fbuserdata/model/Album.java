@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Entity
 @Table(name = "ALBUM", catalog = "fb_user")
-public class Ablum extends BaseModel {
+public class Album extends BaseModel {
 	
 	private static final long serialVersionUID = -4868725091622747545L;
 	
