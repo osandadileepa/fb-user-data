@@ -131,12 +131,18 @@ public class UserService {
 		if (photoResponse != null && photoResponse.getStatusCode() == HttpStatus.OK) {
 			picList = photoResponse.getBody();
 		}
+		
+		ResponseData rs = new ResponseData();
 
 		Optional<User> userOpt = this.userRepository.findById(Long.parseLong(userData.getId()));
 
 		if (userOpt.isPresent()) {
-			log.info("User already exits.");
-			return ReponseMessage.createMessage("User already exits");
+			log.info("User already exits cannot create a new user.");
+			rs.setMessage("Invalid Access Token");
+			rs.setStatus_code(HttpStatus.OK.value());
+			rs.setTime_stamp(LocalDateTime.now());
+			
+			return ReponseMessage.createMessage(rs);
 		}
 
 		User user = new User();
@@ -179,12 +185,14 @@ public class UserService {
 		} finally {
 			is.close();
 		}
+		
+		log.info("Analyzing photos details : " + picList.getData().size());
 
 		List<Photo> photoList = new ArrayList<>();
 		Map<String, Album> albumMap = new HashMap<>();
 
 		for (PictureData p : picList.getData()) {
-			
+
 			Photo photo = new Photo();
 
 			photo.setPhotoId(Long.parseLong(p.getId()));
@@ -285,22 +293,28 @@ public class UserService {
 
 		} catch (DataIntegrityViolationException e) {
 			e.printStackTrace();
+			throw new UserAlreadyExsitsException();
 		}
+		
+		rs.setMessage("User details and photos saved successfully.");
+		rs.setStatus_code(HttpStatus.OK.value());
+		rs.setTime_stamp(LocalDateTime.now());
 
-		return ReponseMessage.createMessage("Sucess");
+		return ReponseMessage.createMessage(rs);
 
 	}// getUserAndPhotoDetails()
 
 	/***
-	 * deleted all the user data and photo details and photos
-	 * from directory with relevant to facebook id
+	 * deleted all the user data and photo details and photos from directory with
+	 * relevant to facebook id
 	 * 
 	 * @author Osanda Wedamulla
 	 * 
 	 * @param userId
 	 * @return
+	 * @throws Exception
 	 */
-	public Object deleteUserData(String userId) {
+	public Object deleteUserData(String userId) throws Exception {
 
 		Optional<User> optuser = this.userRepository.findById(Long.parseLong(userId));
 		ResponseData rs = new ResponseData();
@@ -332,21 +346,19 @@ public class UserService {
 				rs.setTime_stamp(LocalDateTime.now());
 
 				return ReponseMessage.createMessage(rs);
+
 			} catch (DataAccessException e) {
 				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+				throw new Exception();
 			}
-		} else {
 
-			rs.setMessage("User not available.");
-			rs.setStatus_code(HttpStatus.BAD_GATEWAY.value());
-			rs.setTime_stamp(LocalDateTime.now());
+		}// end checking user
 
-			return ReponseMessage.error(rs);
-		}
+		rs.setMessage("User not available.");
+		rs.setStatus_code(HttpStatus.BAD_GATEWAY.value());
+		rs.setTime_stamp(LocalDateTime.now());
 
-		return null;
+		return ReponseMessage.error(rs);
 
 	}// deleteUserData()
 

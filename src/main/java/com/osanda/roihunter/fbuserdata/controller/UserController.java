@@ -44,19 +44,24 @@ public class UserController {
 	@PostMapping()
 	public ResponseEntity<?> getUserAndPhotos(@RequestBody Payload payload) {
 
+		ResponseData rs = new ResponseData();
+
 		try {
 			return ResponseEntity.ok(this.userService.getUserAndPhotoDetails(payload));
 		} catch (FacebookException e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(ReponseMessage.error("Access Token invalid"));
+			rs.setMessage("Invalid Access Token");
+			rs.setStatus_code(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			rs.setTime_stamp(LocalDateTime.now());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ReponseMessage.error(rs));
 		} catch (UserAlreadyExsitsException e) {
-
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(ReponseMessage.error("Cannot add this user : Already Exsits."));
+			rs.setMessage("Error saving new user details or photo details.");
+			rs.setStatus_code(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			rs.setTime_stamp(LocalDateTime.now());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ReponseMessage.error(rs));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-	}//getUserAndPhotos()
+	}// getUserAndPhotos()
 
 	/**
 	 * @author Osanda Wedamulla
@@ -75,6 +80,7 @@ public class UserController {
 			rs.setMessage("User deletion unsccessfull error occured.");
 			rs.setStatus_code(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			rs.setTime_stamp(LocalDateTime.now());
+
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ReponseMessage.error(rs));
 		}
 

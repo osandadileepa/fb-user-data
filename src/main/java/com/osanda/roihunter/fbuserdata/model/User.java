@@ -55,7 +55,7 @@ public class User extends BaseModel {
 	@Column(name = "PROFILE_PIC_URL")
 	private String profilePicUrl;
 
-	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	private List<Photo> photos;
 
 }
