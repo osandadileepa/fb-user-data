@@ -11,7 +11,6 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
 
 import com.osanda.roihunter.fbuserdata.model.enums.Gender;
 
@@ -37,7 +36,7 @@ public class User extends BaseModel {
 	@Column(name = "FB_ID", nullable = false)
 	private Long fbid;
 
-	@Column(name = "NAME")
+	@Column(name = "NAME", nullable = false)
 	private String name;
 
 	@Column(name = "FIRST_NAME")
@@ -46,16 +45,15 @@ public class User extends BaseModel {
 	@Column(name = "LAST_NAME")
 	private String lastName;
 
-	@Email
 	@Column(name = "EMAIL")
 	private String email;
 
-	@Column(name = "GENDER", nullable = false)
+	@Column(name = "GENDER")
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
 	@Column(name = "PROFILE_PIC_URL")
-	private String profilePicUrl = "https://graph.facebook.com/v3.2/" + this.fbid + "/picture";
+	private String profilePicUrl;
 
 	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
 	private List<Photo> photos;

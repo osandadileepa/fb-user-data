@@ -4,15 +4,11 @@ import java.util.HashMap;
 
 public class ReponseMessage {
 
-	/**
-	 * 
-	 * @param message
-	 * 
-	 * @return Hash map of the item passed to the object
-	 */
-	public static HashMap<String, String> createMessage(String message) {
-		HashMap<String, String> h = new HashMap<String, String>() {
-			private static final long serialVersionUID = 2727481603096642451L;
+	public static HashMap<String, Object> createMessage(Object message) {
+		HashMap<String, Object> h = new HashMap<String, Object>() {
+
+			private static final long serialVersionUID = -206519932607308207L;
+
 			{
 				put("message", message);
 			}
@@ -20,9 +16,11 @@ public class ReponseMessage {
 		return h;
 	}// createMessage()
 
-	public static HashMap<String, String> error(String message) {
-		HashMap<String, String> h = new HashMap<String, String>() {
-			private static final long serialVersionUID = 2727481603096642451L;
+	public static HashMap<String, Object> error(Object message) {
+		HashMap<String, Object> h = new HashMap<String, Object>() {
+
+			private static final long serialVersionUID = -8190644218885561360L;
+
 			{
 				put("error", message);
 			}

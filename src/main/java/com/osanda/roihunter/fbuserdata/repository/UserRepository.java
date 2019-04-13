@@ -7,7 +7,5 @@ import com.osanda.roihunter.fbuserdata.model.User;
 
 @RepositoryRestResource(exported = false)
 public interface UserRepository extends JpaRepository<User, Long> {
-	
-	User findFirstByFbid(String id);
 
 }

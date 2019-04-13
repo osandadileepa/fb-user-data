@@ -6,6 +6,10 @@ import java.lang.reflect.Field;
 public class DirectoryUtil {
 
 	public final static File DATA = new File("data");
+	
+	public final static File PROFILE_PIC = new File(DATA, "profile_pic");
+	
+	public final static File PHOTOS = new File(DATA, "photos");
 
 	public static void createDirectories() {
 		Field[] fields = DirectoryUtil.class.getDeclaredFields();
