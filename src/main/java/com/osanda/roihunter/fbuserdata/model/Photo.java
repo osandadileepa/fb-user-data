@@ -32,7 +32,7 @@ public class Photo extends BaseModel {
 	@Column(name = "LINK", nullable = false)
 	private String link;
 
-	@OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	private Album album;
 
 	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)

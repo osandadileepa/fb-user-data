@@ -16,6 +16,8 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +39,7 @@ import com.osanda.roihunter.fbuserdata.model.dto.ImageDto;
 import com.osanda.roihunter.fbuserdata.model.dto.Payload;
 import com.osanda.roihunter.fbuserdata.model.dto.Photos;
 import com.osanda.roihunter.fbuserdata.model.dto.PictureData;
+import com.osanda.roihunter.fbuserdata.model.dto.response.ResponseData;
 import com.osanda.roihunter.fbuserdata.model.enums.Gender;
 import com.osanda.roihunter.fbuserdata.repository.AlbumRepository;
 import com.osanda.roihunter.fbuserdata.repository.ImageRepository;
@@ -71,6 +74,16 @@ public class UserService {
 	private final AlbumRepository albumRepository;
 	private final ImageRepository imageRepository;
 
+	/***
+	 * get access token and FB Id as an input and get user details and user photos
+	 * and other relevant details with photos
+	 * 
+	 * @author Osanda Wedamulla
+	 * 
+	 * @param payload
+	 * @return Object
+	 * @throws Exception
+	 */
 	@Transactional()
 	public Object getUserAndPhotoDetails(Payload payload) throws Exception {
 
@@ -171,11 +184,9 @@ public class UserService {
 		Map<String, Album> albumMap = new HashMap<>();
 
 		for (PictureData p : picList.getData()) {
-
-			System.err.println("Data " + p.toString());
-
-			Photo photo = new Photo();
 			
+			Photo photo = new Photo();
+
 			photo.setPhotoId(Long.parseLong(p.getId()));
 			photo.setName(p.getName() == null ? "unnamed _" + Math.random() : p.getName());
 			photo.setLink(p.getLink());
@@ -280,4 +291,63 @@ public class UserService {
 
 	}// getUserAndPhotoDetails()
 
-}
+	/***
+	 * deleted all the user data and photo details and photos
+	 * from directory with relevant to facebook id
+	 * 
+	 * @author Osanda Wedamulla
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public Object deleteUserData(String userId) {
+
+		Optional<User> optuser = this.userRepository.findById(Long.parseLong(userId));
+		ResponseData rs = new ResponseData();
+
+		if (optuser.isPresent()) {
+
+			try {
+
+				User user = optuser.get();
+
+				File profile = new File(DirectoryUtil.PROFILE_PIC, user.getFbid().toString());
+				File photos = new File(DirectoryUtil.PHOTOS, user.getFbid().toString());
+
+				if (profile.exists() && profile.isDirectory()) {
+					FileUtils.deleteDirectory(profile);
+					log.info("User profile pic directory deleted.");
+				}
+
+				if (photos.exists() && photos.isDirectory()) {
+					FileUtils.deleteDirectory(photos);
+					log.info("User photo directory deleted.");
+				}
+
+				this.userRepository.delete(user);
+				log.info("User details and photos details deleted.");
+
+				rs.setMessage("User and photos deleted sucessfull.");
+				rs.setStatus_code(HttpStatus.OK.value());
+				rs.setTime_stamp(LocalDateTime.now());
+
+				return ReponseMessage.createMessage(rs);
+			} catch (DataAccessException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+
+			rs.setMessage("User not available.");
+			rs.setStatus_code(HttpStatus.BAD_GATEWAY.value());
+			rs.setTime_stamp(LocalDateTime.now());
+
+			return ReponseMessage.error(rs);
+		}
+
+		return null;
+
+	}// deleteUserData()
+
+}// UserService {}
