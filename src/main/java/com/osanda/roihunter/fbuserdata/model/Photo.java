@@ -23,28 +23,21 @@ public class Photo extends BaseModel {
 	private static final long serialVersionUID = 690055354128195603L;
 
 	@Id
-	@Column(name = "ID", nullable = false)
-	private Long id;
+	@Column(name = "PHOTO_ID", nullable = false)
+	private Long photoId;
 
-	@Column(name = "URL", nullable = false)
-	private String url;
+	@Column(name = "NAME", nullable = false)
+	private String name;
 
-	@Column(name = "FILE_NAME")
-	private String fileName;
+	@Column(name = "LINK", nullable = false)
+	private String link;
 
-	@Column(name = "FULL_FILE_PATH")
-	private String fullFilePath;
-
-	@Column(name = "RELETIVE_FILE_PATH")
-	private String reletiveFilePath;
-
-	@Column(name = "FILE_SIZE")
-	private Double fileSize;
-
-	@OneToOne(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
 	private Album album;
 
-	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
-	private List<Reaction> reactions;
+	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+	private List<Image> images;
 
+	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	private List<Reaction> reactions;
 }
