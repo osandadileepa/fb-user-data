@@ -10,7 +10,7 @@ import lombok.ToString;
 @Data
 @ToString
 @NoArgsConstructor
-public class Photos implements Serializable {
+public class PhotoDto implements Serializable {
 
 	private static final long serialVersionUID = 6930280912005454783L;
 

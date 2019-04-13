@@ -10,7 +10,7 @@ public class ReponseMessage {
 			private static final long serialVersionUID = -206519932607308207L;
 
 			{
-				put("message", message);
+				put("sucess", message);
 			}
 		};
 		return h;

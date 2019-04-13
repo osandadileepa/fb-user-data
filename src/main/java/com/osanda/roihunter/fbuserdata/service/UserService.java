@@ -30,6 +30,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.osanda.roihunter.fbuserdata.exception.FacebookException;
 import com.osanda.roihunter.fbuserdata.exception.UserAlreadyExsitsException;
+import com.osanda.roihunter.fbuserdata.exception.UserNotFoundException;
 import com.osanda.roihunter.fbuserdata.model.Album;
 import com.osanda.roihunter.fbuserdata.model.Image;
 import com.osanda.roihunter.fbuserdata.model.Photo;
@@ -37,9 +38,11 @@ import com.osanda.roihunter.fbuserdata.model.User;
 import com.osanda.roihunter.fbuserdata.model.dto.FacebookResponse;
 import com.osanda.roihunter.fbuserdata.model.dto.ImageDto;
 import com.osanda.roihunter.fbuserdata.model.dto.Payload;
-import com.osanda.roihunter.fbuserdata.model.dto.Photos;
+import com.osanda.roihunter.fbuserdata.model.dto.PhotoDto;
 import com.osanda.roihunter.fbuserdata.model.dto.PictureData;
 import com.osanda.roihunter.fbuserdata.model.dto.response.ResponseData;
+import com.osanda.roihunter.fbuserdata.model.dto.response.UserDto;
+import com.osanda.roihunter.fbuserdata.model.dto.response.UserPhotoDto;
 import com.osanda.roihunter.fbuserdata.model.enums.Gender;
 import com.osanda.roihunter.fbuserdata.repository.AlbumRepository;
 import com.osanda.roihunter.fbuserdata.repository.ImageRepository;
@@ -58,13 +61,12 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class UserService {
 
 	public static String FB_URL = "https://graph.facebook.com/v3.2/me?fields=id,first_name,last_name,name,email,gender";
-
 	public static String BASE_FB_URL = "https://graph.facebook.com/v3.2/";
 
 	private final RestTemplate restTemplate;
@@ -84,7 +86,7 @@ public class UserService {
 	 * @return Object
 	 * @throws Exception
 	 */
-	@Transactional()
+	@Transactional(rollbackOn = UserAlreadyExsitsException.class)
 	public Object getUserAndPhotoDetails(Payload payload) throws Exception {
 
 		HttpHeaders headers = new HttpHeaders();
@@ -116,22 +118,22 @@ public class UserService {
 		String phot_url = BASE_FB_URL + userId + "/photos?fields=id,name,webp_images,link,album&access_token="
 				+ payload.getAccess_token();
 
-		ResponseEntity<Photos> photoResponse = null;
+		ResponseEntity<PhotoDto> photoResponse = null;
 
 		try {
-			photoResponse = restTemplate.exchange(phot_url, HttpMethod.GET, entity, Photos.class);
+			photoResponse = restTemplate.exchange(phot_url, HttpMethod.GET, entity, PhotoDto.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new FacebookException();
 		}
 		log.info("Getting photo details and links complete.");
 
-		Photos picList = null;
+		PhotoDto picList = null;
 
 		if (photoResponse != null && photoResponse.getStatusCode() == HttpStatus.OK) {
 			picList = photoResponse.getBody();
 		}
-		
+
 		ResponseData rs = new ResponseData();
 
 		Optional<User> userOpt = this.userRepository.findById(Long.parseLong(userData.getId()));
@@ -141,7 +143,7 @@ public class UserService {
 			rs.setMessage("Invalid Access Token");
 			rs.setStatus_code(HttpStatus.OK.value());
 			rs.setTime_stamp(LocalDateTime.now());
-			
+
 			return ReponseMessage.createMessage(rs);
 		}
 
@@ -185,7 +187,7 @@ public class UserService {
 		} finally {
 			is.close();
 		}
-		
+
 		log.info("Analyzing photos details : " + picList.getData().size());
 
 		List<Photo> photoList = new ArrayList<>();
@@ -196,7 +198,7 @@ public class UserService {
 			Photo photo = new Photo();
 
 			photo.setPhotoId(Long.parseLong(p.getId()));
-			photo.setName(p.getName() == null ? "unnamed _" + Math.random() : p.getName());
+			photo.setName(p.getName() == null ? "unnamed_" + Math.random() : p.getName());
 			photo.setLink(p.getLink());
 
 			List<Image> imageList = new ArrayList<>();
@@ -284,7 +286,7 @@ public class UserService {
 
 			log.info("Saving photos : " + photoList.size());
 			this.photoRepository.saveAll(photoList);
-			log.info("Photos saved.");
+			log.info("PhotoDto saved.");
 
 			user.setPhotos(photoList);
 
@@ -295,7 +297,7 @@ public class UserService {
 			e.printStackTrace();
 			throw new UserAlreadyExsitsException();
 		}
-		
+
 		rs.setMessage("User details and photos saved successfully.");
 		rs.setStatus_code(HttpStatus.OK.value());
 		rs.setTime_stamp(LocalDateTime.now());
@@ -352,7 +354,7 @@ public class UserService {
 				throw new Exception();
 			}
 
-		}// end checking user
+		} // end checking user
 
 		rs.setMessage("User not available.");
 		rs.setStatus_code(HttpStatus.BAD_GATEWAY.value());
@@ -361,5 +363,85 @@ public class UserService {
 		return ReponseMessage.error(rs);
 
 	}// deleteUserData()
+
+	/***
+	 * get available user details from fb user id
+	 * 
+	 * @author Osanda Wedamulla
+	 * 
+	 * @param userId
+	 * @return
+	 * @throws UserNotFoundException
+	 */
+	public Object getUserDetailsFromId(String userId) throws UserNotFoundException {
+
+		Optional<User> optuser = this.userRepository.findById(Long.parseLong(userId));
+
+		if (optuser.isPresent()) {
+
+			User user = optuser.get();
+
+			UserDto resDto = new UserDto(user.getFbid(), user.getName(), user.getFirstName(), user.getLastName(),
+					user.getEmail(), user.getGender(), user.getProfilePicUrl());
+
+			return resDto;
+
+		}
+
+		throw new UserNotFoundException();
+
+	}// getUserDetailsFromId()
+
+	/***
+	 * @author Osanda Wedamulla
+	 * 
+	 * @param userId
+	 * @return
+	 * @throws UserNotFoundException
+	 */
+	public Object getUserPhotoDetails(String userId) throws UserNotFoundException {
+
+		Optional<User> optuser = this.userRepository.findById(Long.parseLong(userId));
+
+		List<UserPhotoDto> photoList = new ArrayList<>();
+
+		if (optuser.isPresent()) {
+
+			User user = optuser.get();
+
+			user.getPhotos().forEach(p -> {
+
+				UserPhotoDto pic = new UserPhotoDto();
+
+				pic.setName(p.getName());
+				pic.setFbUrl(p.getLink());
+
+				if (p.getImages().size() > 0) {
+
+					Image im = p.getImages().get(0);
+
+					pic.setImageUrl(im.getUrl());
+					pic.setImageName(im.getFileName());
+					pic.setImagePath(im.getReletiveFilePath());
+				}
+
+				if (p.getAlbum() != null) {
+
+					Album album = p.getAlbum();
+					pic.setAlbumName(album.getName());
+					pic.setAlbumCreatedTime(album.getCreatedTime());
+				}
+
+				photoList.add(pic);
+
+			});
+
+			return photoList;
+
+		} // checking user availability
+
+		throw new UserNotFoundException();
+
+	}// getUserPhotoDetails()
 
 }// UserService {}

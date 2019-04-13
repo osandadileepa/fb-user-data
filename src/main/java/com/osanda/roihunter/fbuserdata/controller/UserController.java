@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.osanda.roihunter.fbuserdata.exception.FacebookException;
 import com.osanda.roihunter.fbuserdata.exception.UserAlreadyExsitsException;
+import com.osanda.roihunter.fbuserdata.exception.UserNotFoundException;
 import com.osanda.roihunter.fbuserdata.model.dto.Payload;
 import com.osanda.roihunter.fbuserdata.model.dto.response.ResponseData;
 import com.osanda.roihunter.fbuserdata.service.UserService;
@@ -52,11 +53,13 @@ public class UserController {
 			rs.setMessage("Invalid Access Token");
 			rs.setStatus_code(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			rs.setTime_stamp(LocalDateTime.now());
+
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ReponseMessage.error(rs));
 		} catch (UserAlreadyExsitsException e) {
 			rs.setMessage("Error saving new user details or photo details.");
 			rs.setStatus_code(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			rs.setTime_stamp(LocalDateTime.now());
+
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ReponseMessage.error(rs));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -86,16 +89,57 @@ public class UserController {
 
 	}// deleteUserDetailsAndPhotos()
 
+	/***
+	 * @author Osanda Wedamulla
+	 * 
+	 * @param userId
+	 * @return
+	 */
 	@GetMapping(value = "{user_fb_id}")
 	public ResponseEntity<?> getUserDetails(@PathVariable("user_fb_id") String userId) {
 
-		return null;
-	}
+		ResponseData rs = new ResponseData();
 
+		try {
+			return ResponseEntity.ok(this.userService.getUserDetailsFromId(userId));
+			
+		} catch (UserNotFoundException e) {
+			rs.setMessage("Requested user details not available.");
+			rs.setStatus_code(HttpStatus.BAD_GATEWAY.value());
+			rs.setTime_stamp(LocalDateTime.now());
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ReponseMessage.error(rs));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+
+	}// getUserDetails()
+
+	/***
+	 * @author Osanda Wedamulla
+	 * 
+	 * @param userId
+	 * @return
+	 */
 	@GetMapping(value = "{user_fb_id}/photos")
 	public ResponseEntity<?> getUserDetailsWithPhotos(@PathVariable("user_fb_id") String userId) {
+		
+		ResponseData rs = new ResponseData();
+		
+		try {
+			
+			return ResponseEntity.ok(this.userService.getUserPhotoDetails(userId));
+			
+		} catch (UserNotFoundException e) {
+			rs.setMessage("Requested user details not available.");
+			rs.setStatus_code(HttpStatus.BAD_GATEWAY.value());
+			rs.setTime_stamp(LocalDateTime.now());
 
-		return null;
-	}
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ReponseMessage.error(rs));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 
-}
+	}// getUserDetailsWithPhotos()
+
+}// UserController{}

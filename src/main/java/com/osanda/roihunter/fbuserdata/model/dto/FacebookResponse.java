@@ -25,6 +25,6 @@ public class FacebookResponse implements Serializable {
 
 	private String last_name;
 
-	private Photos photos;
+	private PhotoDto photos;
 
 }
