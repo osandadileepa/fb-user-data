@@ -53,6 +53,7 @@ public class BaseModel implements Serializable {
 
 	@Version
 	@JsonIgnore
+	@Column(name = "VERSION")
 	private Long version;
 
 }

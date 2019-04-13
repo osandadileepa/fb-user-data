@@ -1,40 +1,61 @@
 package com.osanda.roihunter.fbuserdata.model;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+
+import com.osanda.roihunter.fbuserdata.model.enums.Gender;
 
 import lombok.Getter;
 import lombok.Setter;
 
+/***
+ * basic details about user
+ * 
+ * @author Osanda Wedamulla
+ *
+ */
+
 @Setter
 @Getter
 @Entity
-@Table(name = "USER")
+@Table(name = "USER", catalog = "fb_user")
 public class User extends BaseModel {
-	
+
 	private static final long serialVersionUID = -2650748825652470008L;
-	
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Column(name = "FB_ID", nullable = false)
+	private Long fbid;
 
-    @NotNull
-    @Pattern(regexp = "^[a-z0-9]*$")
-    @Size(min = 1, max = 50)
-    @Column(length = 50, unique = true, nullable = false)
-    private String userName;
+	@Column(name = "NAME", nullable = false)
+	private String name;
 
-    @Email
-    private String email;
+	@Column(name = "FIRST_NAME")
+	private String firstName;
 
-    private Boolean active;
+	@Column(name = "LAST_NAME")
+	private String lastName;
+
+	@Column(name = "EMAIL")
+	private String email;
+
+	@Column(name = "GENDER")
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
+
+	@Column(name = "PROFILE_PIC_URL")
+	private String profilePicUrl;
+
+	@OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	private List<Photo> photos;
 
 }
