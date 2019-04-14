@@ -17,6 +17,11 @@ spring:
   jpa:
     show-sql: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
   jooq:
     sql-dialect: org.hibernate.dialect.MySQL5Dialect
+    
+  flyway:
+    schemas:
+    - fb_user
+    baseline-on-migrate: true
