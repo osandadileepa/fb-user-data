@@ -25,3 +25,4 @@ spring:
     schemas:
     - fb_user
     baseline-on-migrate: true
+    baseline-version: 1

@@ -15,8 +15,17 @@ CREATE TABLE `album` (
   `created_time` datetime DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `album`
+--
+
+LOCK TABLES `album` WRITE;
+/*!40000 ALTER TABLE `album` DISABLE KEYS */;
+/*!40000 ALTER TABLE `album` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `image`
@@ -40,8 +49,17 @@ CREATE TABLE `image` (
   `url` varchar(255) NOT NULL,
   `width` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=126 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `image`
+--
+
+LOCK TABLES `image` WRITE;
+/*!40000 ALTER TABLE `image` DISABLE KEYS */;
+/*!40000 ALTER TABLE `image` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `photo`
@@ -66,6 +84,15 @@ CREATE TABLE `photo` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `photo`
+--
+
+LOCK TABLES `photo` WRITE;
+/*!40000 ALTER TABLE `photo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `photo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `photo_images`
 --
 
@@ -81,6 +108,15 @@ CREATE TABLE `photo_images` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `photo_images`
+--
+
+LOCK TABLES `photo_images` WRITE;
+/*!40000 ALTER TABLE `photo_images` DISABLE KEYS */;
+/*!40000 ALTER TABLE `photo_images` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `photo_reactions`
 --
 
@@ -94,6 +130,15 @@ CREATE TABLE `photo_reactions` (
   KEY `FK6bbi4gx8na7clqkr2eymu32ng` (`photo_photo_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `photo_reactions`
+--
+
+LOCK TABLES `photo_reactions` WRITE;
+/*!40000 ALTER TABLE `photo_reactions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `photo_reactions` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `reaction`
@@ -113,6 +158,15 @@ CREATE TABLE `reaction` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reaction`
+--
+
+LOCK TABLES `reaction` WRITE;
+/*!40000 ALTER TABLE `reaction` DISABLE KEYS */;
+/*!40000 ALTER TABLE `reaction` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `user`
@@ -139,6 +193,15 @@ CREATE TABLE `user` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `user_photos`
 --
 
@@ -151,6 +214,24 @@ CREATE TABLE `user_photos` (
   UNIQUE KEY `UK_cmsm4g8n78bx2owa96ged0bnw` (`photos_photo_id`),
   KEY `FKe9xjepvn9xk4o9o9gjlvhdnuu` (`user_fb_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `user_photos`
+--
 
+LOCK TABLES `user_photos` WRITE;
+/*!40000 ALTER TABLE `user_photos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_photos` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2019-04-14 20:47:24
