@@ -140,7 +140,7 @@ public class UserService {
 
 		if (userOpt.isPresent()) {
 			log.info("User already exits cannot create a new user.");
-			rs.setMessage("Invalid Access Token");
+			rs.setMessage("User already exits.");
 			rs.setStatus_code(HttpStatus.OK.value());
 			rs.setTime_stamp(LocalDateTime.now());
 
